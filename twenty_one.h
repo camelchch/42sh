@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/29 00:15:00 by saxiao            #+#    #+#             */
-/*   Updated: 2018/07/01 14:13:42 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/07/19 16:50:00 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ int		g_dld;
 # define CONTRL_F 6
 # define CONTRL_D 4
 # define CONTRL_C 3
+# define TAB_KEY 9
 # define DELETE_AT_POSITION 2117294875
 
 typedef struct	s_table
@@ -193,6 +194,7 @@ int				delete_key(t_line *line);
 int				delete_all(t_line *line);
 int				delete_at_position(t_line *line);
 int				ctrl_d(t_line *line);
+int				tab_key(t_line *line);
 int				ctrl_c(char *new_line, t_line *line);
 int				printable(t_line *line, unsigned long key);
 void			put_a_key(t_line *line, unsigned long key);
@@ -226,6 +228,7 @@ void			replace_home_cd(char *cp, char *home);
 void			ft_exit(char ***env, t_sh *table);
 int				cd(char **paras, char ***env);
 int				put_env(char **env, char **paras, t_sh *table);
+
 typedef struct	s_helper{
 	int		i;
 	int		j;
@@ -308,4 +311,12 @@ typedef struct	s_autolist
 	char				name[MAX_BUF];
 	struct s_autolist	*next;
 }				t_autolist;
+
+typedef struct	s_win
+{
+	int		max;
+	int		line;
+	int		col;
+	int		ct_lt;
+}				t_win;
 #endif

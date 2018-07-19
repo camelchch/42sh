@@ -80,20 +80,30 @@ t_autolist	*addlist_in_path(char *start, char **path, t_autolist *list)
 	return (list);
 }
 
-char		*path_last_slash(char *start)
+static void	path_last_slash(char *start, char *dic, int index)
 {
+	int		i;
+
+	i = ft_strlen(start) - 1;
+	while (i >= 0 && start[i] != '/')
+		i--;
+	ft_bzero(dic, index);
+	ft_strncpy(dic, start, i + 1);
 }
+
 t_autolist	*addlist_no_path(char *start, t_autolist *list)
 {
 	DIR				*dirp;
 	struct dirent	*dir;
 	t_autolist		*add;
+	char			dic[MAX_BUF];
 
-	if ((dirp = opendir(*path)))
+	path_last_slash(start, dic, MAX_BUF);
+	if ((dirp = opendir(dic)))
 	{
 		while ((dir = readdir(dirp)))
 		{
-			if (!ft_strncmp(start, dir->d_name, ft_strlen(start)))
+			if (!ft_strncmp(start + ft_strlen(dic), dir->d_name, ft_strlen(start + ft_strlen(dic))))
 			{
 				add = malloc(sizeof(t_autolist));
 				add->next = NULL;
@@ -117,6 +127,70 @@ t_autolist	*get_autolist(char *start, char **env)
 	all_path = path(env);
 	if (!ft_strchr(start, '/'))
 		list = addlist_in_path(start, all_path, list);
+	else
+		list = addlist_no_path(start, list);
+	return (list);
+}
+
+static	void	init_win(t_autolist *list, int win_col, t_win *win)
+{
+	t_autolist	*cp;
+
+	cp = list;
+	win->ct_lt = 0;
+	win->max = 0;
+	while (cp)
+	{
+		if (cp->len > win->max)
+			win->max = cp->len;
+		cp = cp->next;
+	}
+	win->max++;
+	cp = list;
+	while (cp)
+	{
+		(win->ct_lt)++;
+		cp = cp->next;
+	}
+	win->col = win_col / win->max;
+	if (!win->col)
+		win->col = 1;
+	win->line = win->ct_lt / win->col;
+	if (win->ct_lt % win->col > 0)
+		win->line++;
+}
+
+void	put_colum(t_autolist *list, int win_col)
+{
+	t_autolist	*cp;
+	t_autolist	*lt;
+	t_helper	ct;
+	t_win		w;
+
+	ct.j = -1;
+	init_win(list, win_col, &w);
+	lt = list;
+	while (++(ct.j) < w.line)
+	{
+		cp = lt;
+		ct.i = -1;
+		while (++(ct.i) < w.col && cp)
+		{
+			ct.index = 0;
+			if (cp)
+				ft_printf("%s*s", w.max, list->name);
+			while (cp && (ct.index)++ < w.line)
+				cp = cp->next;
+		}
+		ft_printf("\n");
+		lt = lt->next;
+	}
+}
+
+int		tab_key(t_line *line, char **env)
+{
+	t_autolist	*list;
+	
 }
 
 int		main()
