@@ -301,4 +301,11 @@ int				replace_home(char *word, char **env);
 void			case_dquote_squote(t_helper *help, char *cp, char *word);
 void			put_strstr(char **str);
 unsigned long	get_key(void);
+
+typedef struct	s_autolist
+{
+	int					len;
+	char				name[MAX_BUF];
+	struct s_autolist	*next;
+}				t_autolist;
 #endif
