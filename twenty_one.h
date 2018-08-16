@@ -30,7 +30,7 @@ int		g_dld;
 # define SETOLD 0
 # define STDIN_FILENO 0
 # define STDOUT_FILENO 1
-# define NB_KEY 20
+# define NB_KEY 21
 # define ARROW_LEFT 4479771
 # define ARROW_RIGHT 4414235
 # define ARROW_UP 4283163
@@ -59,7 +59,10 @@ int		g_dld;
 # define CONTRL_D 4
 # define CONTRL_C 3
 # define TAB_KEY 9
+# define RETURN_KEY 10
 # define DELETE_AT_POSITION 2117294875
+# define BGYELLOW "\033[7;33m"
+# define RESET "\033[0m"
 
 typedef struct	s_table
 {
@@ -125,6 +128,24 @@ typedef struct	s_history
 
 t_history	*g_history;
 
+typedef struct	s_autolist
+{
+	int					len;
+	int					is_dic;
+	int					ct;
+	char				name[MAX_BUF];
+	struct s_autolist	*next;
+	struct s_autolist	*pre;
+}				t_autolist;
+
+typedef struct	s_win
+{
+	int		max;
+	int		line;
+	int		col;
+	int		ct_lt;
+}				t_win;
+
 typedef struct	s_line
 {
 	int				pos;
@@ -141,6 +162,11 @@ typedef struct	s_line
 	int				up_indown;
 	int				one_his;
 	int				here_end;
+	int				auto_ct;
+	int				auto_is_dic;
+	int				auto_current_dic;
+	t_win			w;
+	t_autolist		*auto_lt;
 	t_history		*last_his;
 
 	int				(*printable)(struct s_line *line, unsigned long a_key);
@@ -163,8 +189,10 @@ typedef struct	s_line
 	int				(*go_up)(struct s_line *line);
 	int				(*go_down)(struct s_line *line);
 	int				(*ctrl_d)(struct s_line *line);
+	int				(*return_key)(struct s_line *line);
 	int				(*delete_at_position)(struct s_line *line);
-	int				(*engine)(struct s_line *line, unsigned long a_key);
+	int				(*my_tabkey)(struct s_line *line, char **env);
+	int				(*engine)(struct s_line *line, unsigned long a_key, char **env);
 }				t_line;
 typedef struct	s_key
 {
@@ -183,7 +211,7 @@ void			pipes(char *cmdline, int nb_pipe, char ***env, t_sh *table);
 int				no_pipe(char *cmdline);
 int				init_attr(int mod);
 int				my_putc(int c);
-int				engine(t_line *line, unsigned long key);
+int				engine(t_line *line, unsigned long key, char **env);
 int				move_left(t_line *line);
 int				move_nleft(t_line *line);
 int				mv_left_word(t_line *line);
@@ -194,7 +222,7 @@ int				delete_key(t_line *line);
 int				delete_all(t_line *line);
 int				delete_at_position(t_line *line);
 int				ctrl_d(t_line *line);
-int				tab_key(t_line *line);
+int				my_tabkey(t_line *line, char **env);
 int				ctrl_c(char *new_line, t_line *line);
 int				printable(t_line *line, unsigned long key);
 void			put_a_key(t_line *line, unsigned long key);
@@ -209,9 +237,10 @@ int				cut_end(t_line *line);
 int				paste(t_line *line);
 int				go_up(t_line *line);
 int				go_down(t_line *line);
-int				get_line(char *prompt, char *new_line, t_line *line);
+int				return_key(t_line *line);
+int				get_line(char *prompt, char *new_line, t_line *line, char **env);
 void			init_line(char	*prompt, t_line *line);
-int				prompt_open_quote(char *line);
+int				prompt_open_quote(char *line, char **env);
 int				prompt(char **env, t_sh *table);
 char			*ft_getenv(char **env, char *name);
 char			**path(char **env);
@@ -263,7 +292,7 @@ t_word			*semidot_type(char *line, int *index);
 int				return_message(char *message, int re_value, int fd);
 void			my_here_doc(char *line);
 int				inclu_heredoc(char *new_line);
-char			**my_here_doc_word_init_pro_args(t_word *list);
+char			**my_here_doc_word_init_pro_args(t_word *list, char **env);
 int				all_case_redirection(t_word *list);
 int				redi_great(t_word *list);
 int				redi_dgreat(t_word *list);
@@ -305,18 +334,17 @@ void			case_dquote_squote(t_helper *help, char *cp, char *word);
 void			put_strstr(char **str);
 unsigned long	get_key(void);
 
-typedef struct	s_autolist
-{
-	int					len;
-	char				name[MAX_BUF];
-	struct s_autolist	*next;
-}				t_autolist;
 
-typedef struct	s_win
-{
-	int		max;
-	int		line;
-	int		col;
-	int		ct_lt;
-}				t_win;
+//auto_complet.c
+t_autolist		*add_one_list(t_autolist *list, t_autolist *add);
+int				nb_list(t_autolist *list);
+void			free_auto_lt(t_line *line);
+
+//sort_list.c
+void			del_one_list(t_autolist **list, t_autolist *del);
+void			sort_list(t_autolist **list);
+
+//line_auto_color.c
+void			bg_yellow(void);
+void			color_reset(void);
 #endif

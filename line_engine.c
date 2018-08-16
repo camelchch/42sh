@@ -32,6 +32,8 @@ static void	init_for_enginie_2(t_key *t, t_line *line)
 	t[18].func = line->delete_at_position;
 	t[19].a_key = CONTRL_D;
 	t[19].func = line->ctrl_d;
+	t[20].a_key = RETURN_KEY;
+	t[20].func = line->return_key;
 }
 
 static void	init_for_engine(t_key *t, t_line *line)
@@ -61,7 +63,7 @@ static void	init_for_engine(t_key *t, t_line *line)
 	init_for_enginie_2(t, line);
 }
 
-int			engine(t_line *line, unsigned long key)
+int			engine(t_line *line, unsigned long key, char **env)
 {
 	int		i;
 	t_key	t[NB_KEY];
@@ -76,13 +78,19 @@ int			engine(t_line *line, unsigned long key)
 		}
 		line->printable(line, key);
 	}
+	else if (key == TAB_KEY)
+		my_tabkey(line, env);
 	else
 	{
 		init_for_engine(t, line);
 		while (++i < NB_KEY)
 		{
 			if (key == (t[i].a_key))
+			{
 				t[i].func(line);
+				free_auto_lt(line);
+				line->auto_ct = -1;
+				}
 		}
 	}
 	return (0);

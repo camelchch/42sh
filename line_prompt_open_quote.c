@@ -40,17 +40,17 @@ static int		open_quote_exit(char *line)
 	return (0);
 }
 
-static void		for_open_quote(char *new_line, char *line, t_line *quote_line)
+static void		for_open_quote(char *new_line, char *line, t_line *quote_line, char **env)
 {
 	if (!g_clc)
 		ft_strcat(line, "\n");
 	if (g_open_dquote > 0)
-		get_line("dquote> ", new_line, quote_line);
+		get_line("dquote> ", new_line, quote_line, env);
 	else
-		get_line("quote> ", new_line, quote_line);
+		get_line("quote> ", new_line, quote_line, env);
 }
 
-int				prompt_open_quote(char *line)
+int				prompt_open_quote(char *line, char **env)
 {
 	char	new_line[MAX_BUF];
 	t_line	quote_line;
@@ -60,14 +60,14 @@ int				prompt_open_quote(char *line)
 		ft_bzero(new_line, MAX_BUF);
 		if (g_open_backslash > 0)
 		{
-			get_line("> ", new_line, &quote_line);
+			get_line("> ", new_line, &quote_line, env);
 			line[ft_strlen(line) - 1] = '\0';
 			ft_strcat(line, new_line);
 			g_with_termcap ? ft_printf("\n") : (void)g_with_termcap;
 		}
 		else
 		{
-			for_open_quote(new_line, line, &quote_line);
+			for_open_quote(new_line, line, &quote_line, env);
 			if (ft_strlen(line) + ft_strlen(new_line) < MAX_BUF - 1)
 				ft_strcat(line, new_line);
 			g_with_termcap ? ft_printf("\n") : (void)g_with_termcap;

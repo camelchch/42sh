@@ -81,7 +81,7 @@ int				actions_each_bloc(t_word *list, char ***env, t_sh *table)
 	do_all_pipe(pipe_fd, nb_pipe);
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT && !g_clc)
 	{
-		if (!(pro[++i].pro_args = my_here_doc_word_init_pro_args(list)))
+		if (!(pro[++i].pro_args = my_here_doc_word_init_pro_args(list, *env)))
 			return (0);
 		if (valide_program(pro[i].pro_args, table))
 		{

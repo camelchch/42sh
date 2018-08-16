@@ -58,14 +58,14 @@ int			prompt(char **env, t_sh *table)
 	ft_strcpy(g_temp_file, "./tmp_twentyone.c");
 	while (42)
 	{
-		get_line("$> ", g_new_line, &g_line);
+		get_line("$> ", g_new_line, &g_line, env);
 		g_with_termcap ? ft_printf("\n") : (void)g_clc;
 		if (not_empty(g_new_line))
 		{
 			add = malloc(sizeof(t_history));
 			init_add(add, g_new_line);
 			add_history(&g_history, add);
-			if (!prompt_open_quote(g_new_line))
+			if (!prompt_open_quote(g_new_line, env))
 			{
 				list = command_to_words(g_new_line);
 				actions_each_line(&env, list, table);

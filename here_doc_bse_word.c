@@ -24,7 +24,7 @@ static void	for_here_doc(int *temp_fd, t_line *doc_line)
 		ft_putendl_fd("temp file failed to be opened", 2);
 }
 
-static int	write2_temp_file(char *word)
+static int	write2_temp_file(char *word, char **env)
 {
 	int		i;
 	int		temp_fd;
@@ -36,7 +36,7 @@ static int	write2_temp_file(char *word)
 	{
 		ft_bzero(doc.here, MAX_BUF);
 		i == 0 ? ft_printf("\n") : (i = 0);
-		get_line("heredoc> ", (char *)doc.here, &doc);
+		get_line("heredoc> ", (char *)doc.here, &doc, env);
 		if (ft_strcmp(word, (char *)doc.here) && !g_clc && !g_dld)
 		{
 			if (write(temp_fd, doc.here, ft_strlen((char *)doc.here)) < 0)
@@ -52,7 +52,7 @@ static int	write2_temp_file(char *word)
 	return (0);
 }
 
-char		**my_here_doc_word_init_pro_args(t_word *list)
+char		**my_here_doc_word_init_pro_args(t_word *list, char **env)
 {
 	t_word		*cp;
 
@@ -63,7 +63,7 @@ char		**my_here_doc_word_init_pro_args(t_word *list)
 		if (list->type == DLESS)
 		{
 			g_inside_doc_quote = 1;
-			write2_temp_file(list->next->word);
+			write2_temp_file(list->next->word, env);
 			if (g_clc)
 				return (NULL);
 			list->type = LESS;

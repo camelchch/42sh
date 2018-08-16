@@ -40,6 +40,7 @@ static void				for_init_line(t_line *line)
 	line->go_up = go_up;
 	line->go_down = go_down;
 	line->ctrl_d = ctrl_d;
+	line->return_key = return_key;
 	line->delete_at_position = delete_at_position;
 	line->engine = engine;
 }
@@ -57,11 +58,14 @@ void					init_line(char *prompt, t_line *line)
 	line->up_indown = 0;
 	line->one_his = 0;
 	line->last_his = g_history;
+	line->auto_ct = -1;
+	line->auto_lt = NULL;
+	line->auto_is_dic = 0;
 	g_with_termcap = 1;
 	for_init_line(line);
 }
 
-static void				help_for_line(char **ligne, char *new_line, char *pt)
+static void				help_for_line(char **ligne, char *new_line, char *pt, int *is_tabb4)
 {
 	ft_bzero(new_line, MAX_BUF);
 	*ligne = NULL;
@@ -70,22 +74,33 @@ static void				help_for_line(char **ligne, char *new_line, char *pt)
 	ft_printf("%s", pt);
 	g_clc = 0;
 	g_dld = 0;
+	*is_tabb4 = 0;
 }
 
-int						get_line(char *prompt, char *new_line, t_line *line)
+static void				is_tab(unsigned long key, int *is_tabb4)
+{
+	if (key == TAB_KEY)
+		*is_tabb4 = 1;
+	else
+		*is_tabb4 = 0;
+}
+
+int						get_line(char *prompt, char *new_line, t_line *line, char **env)
 {
 	unsigned long	key;
 	char			*ligne;
+	int				is_tabb4;
 
-	help_for_line(&ligne, new_line, prompt);
+	help_for_line(&ligne, new_line, prompt, &is_tabb4);
 	if (init_attr(SETNEW) == 0)
 	{
 		init_line(prompt, line);
-		while (((key = get_key()) && key != '\n') && !g_clc && !g_dld)
+		while (((key = get_key()) && !(!is_tabb4 &&  key == '\n')) && !g_clc && !g_dld)
 		{
+			is_tab(key, &is_tabb4);
 			if (key == CONTRL_C)
 				return (ctrl_c(new_line, line));
-			line->engine(line, key);
+			line->engine(line, key, env);
 		}
 		init_attr(SETOLD);
 		ft_strcpy(new_line, (const char *)line->buf);

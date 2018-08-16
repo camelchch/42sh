@@ -71,7 +71,7 @@ int			pro_is_buildin_no_pipe(t_word *list, char ***env, t_sh *table)
 	recover = NULL;
 	pro_args = NULL;
 	recover = fd_restorage(list, recover);
-	pro_args = my_here_doc_word_init_pro_args(list);
+	pro_args = my_here_doc_word_init_pro_args(list, *env);
 	if (pro_args)
 	{
 		redirection_for_here(list);

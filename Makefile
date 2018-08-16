@@ -30,7 +30,7 @@ SRC = 	rm_quoting_in_list.c rm_quoting_in_word.c \
 		line_get_line.c prompt.c actions_each_line.c actions_each_bloc.c \
 		helper_actions_each_bloc.c helper_actions_each_bloc_2.c line_ctrl_d.c\
 		recover_fd__buildin.c my_free.c helper.c line_prompt_open_quote.c\
-		helper_actions_each_bloc_3.c
+		helper_actions_each_bloc_3.c auto_complet.c sort_list.c line_auto_color.c
 
 LIB_NAME = libft.a
 PRINTF_NAME = libftprintf.a

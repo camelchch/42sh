@@ -53,7 +53,7 @@ int		auto_current(t_line *line, int auto_start)
 		while (i > 0 && line->buf[i] == ' ')
 			i--;
 	}
-	if (line->buf[i] != ' ' && line->buf[i] != '&' && line->buf[i] != '|')
+	if (buf[i] != ' ' && buf[i] != '&' && buf[i] != '|')
 		return (1);
 	return (0);
 }
@@ -129,7 +129,7 @@ t_autolist	*addlist_no_path(char *start, t_autolist *list)
 	{
 		while ((dir = readdir(dirp)))
 		{
-			if (!ft_strncmp(start + ft_strlen(dic), dir->d_name, ft_strlen(start + ft_strlen(dic))) && ft_strcmp(dir->d_name,  ".") && ft_strcmp(dir->d_name, ".."))
+			if (!ft_strncmp(start + ft_strlen(dic), dir->d_name, ft_strlen(start + ft_strlen(dic))) && dir->d_name[0] != '.')
 			{
 				add = malloc(sizeof(t_autolist));
 				add->next = NULL;
@@ -148,18 +148,13 @@ t_autolist	*addlist_no_path(char *start, t_autolist *list)
 	return (list);
 }
 
-t_autolist	*get_autolist(t_line *line, char *start, char **env)
+t_autolist	*get_autolist(char *start, char **env)
 {
 	t_autolist	*list;
 	char		**all_path;
 
 	list = NULL;
 	all_path = path(env);
-	if (auto_current(line, auto_start((char *)line->buf)))
-	{
-		all_path[0] = "./";
-		all_path[1] = NULL;
-		}
 	if (!ft_strchr(start, '/'))
 		list = addlist_in_path(start, all_path, list);
 	else
@@ -361,7 +356,7 @@ int		my_tabkey(t_line *line, char **env)
 	auto_compare = (char *)line->buf + auto_start((char *)line->buf);
 	if (line->auto_ct == -1)
 	{
-		line->auto_lt = get_autolist(line, auto_compare, env);
+		line->auto_lt = get_autolist(auto_compare, env);
 		init_win(line->auto_lt, line->line_max, &(line->w));
 		sort_list(&line->auto_lt);
 	}

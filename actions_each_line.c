@@ -28,7 +28,7 @@ int			dslash_before(char *line, int index)
 		return (1);
 	return (0);
 }
-/*
+
 void		print_list_word(t_word *list)
 {
 	while (list)
@@ -64,4 +64,3 @@ void		actions_each_line(char ***env, t_word *list, t_sh *table)
 	if (!g_clc && !err_in_words(list))
 		actions_blocs(list, env, table);
 }
-*/
