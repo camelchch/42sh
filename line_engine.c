@@ -73,9 +73,11 @@ int			engine(t_line *line, unsigned long key, char **env)
 	{
 		if (line->buf_len == MAX_BUF - 1)
 		{
+			line->is_tabb4 = 0;
 			g_end_line = 1;
 			return (0);
 		}
+		line->auto_ct = -1;
 		line->printable(line, key);
 	}
 	else if (key == TAB_KEY)
@@ -88,10 +90,13 @@ int			engine(t_line *line, unsigned long key, char **env)
 			if (key == (t[i].a_key))
 			{
 				t[i].func(line);
+				if (line->is_tabb4)
+					
 				free_auto_lt(line);
 				line->auto_ct = -1;
 				}
 		}
 	}
+	is_tab(key, line);
 	return (0);
 }

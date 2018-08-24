@@ -28,6 +28,7 @@ int		g_dld;
 # define MAX_BUF 10000
 # define SETNEW 1
 # define SETOLD 0
+# define NOT_DIR 0
 # define STDIN_FILENO 0
 # define STDOUT_FILENO 1
 # define NB_KEY 21
@@ -154,14 +155,17 @@ typedef struct	s_line
 	unsigned char	here_mark[MAX_BUF];
 	unsigned char	here[MAX_BUF];
 	unsigned char	ici_doc[MAX_BUF];
+	unsigned char	auto_compare[MAX_BUF];
 	int				buf_len;
 	int				line_max;
+	int				screen_height;
 	int				start_po;
 	int				his_mostdown;
 	int				his_mostup;
 	int				up_indown;
 	int				one_his;
 	int				here_end;
+	int				is_tabb4;
 	int				auto_ct;
 	int				auto_is_dic;
 	int				auto_current_dic;
@@ -336,9 +340,11 @@ unsigned long	get_key(void);
 
 
 //auto_complet.c
+t_autolist		*add_a_list(t_autolist *list, char *name, unsigned char type);
 t_autolist		*add_one_list(t_autolist *list, t_autolist *add);
 int				nb_list(t_autolist *list);
 void			free_auto_lt(t_line *line);
+void			is_tab(unsigned long key, t_line *line);
 
 //sort_list.c
 void			del_one_list(t_autolist **list, t_autolist *del);
