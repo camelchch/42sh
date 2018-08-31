@@ -148,6 +148,7 @@ t_autolist	*addlist_in_path(t_line *line, char **path, t_autolist *list)
 		}
 		path++;
 	}
+	if (!auto_current(line))
 	list = addlist_buildin(line, list);
 	return (list);
 }

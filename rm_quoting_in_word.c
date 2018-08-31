@@ -56,8 +56,14 @@ static void	other_case(t_helper *help, char *cp, char *word)
 	if (g_open_dquote < 0 && g_open_squote < 0 && help->i - 1 >= 0 && \
 			cp[help->i - 1] == '\\' && dslash_before(cp, help->i - 1))
 		word[help->index - 1] = cp[help->i];
-	else if (!(cp[help->i] == '\\' && !dslash_before(cp, help->i) \
-				&& g_open_squote < 0))
+	else if (g_open_dquote > 0 && (cp[help->i] == '$' || cp[help->i] == '`' ||\
+			cp[help->i] == '\n' || cp[help->i] == '\\') && !dslash_before(cp, help->i))
+		word[help->index - 1] = cp[help->i];
+//	else if (!(cp[help->i] == '\\' && !dslash_before(cp, help->i) \
+//				&& g_open_squote < 0))
+	else if (cp[help->i] == '$' && dslash_before(cp, help->i))
+		help->i--;
+	else
 		word[help->index++] = cp[help->i];
 }
 
@@ -73,12 +79,13 @@ int			remove_quoting_word(char *word, char **env)
 	init_vari_for(&help, cp, vari, word);
 	while (cp[++(help.i)])
 	{
-		if (g_open_squote < 0 && cp[help.i] == '$')
+		if (g_open_squote < 0 && cp[help.i] == '$' && dslash_before(cp, help.i))
 		{
 			dollor_sign(&help, cp, vari);
 			vari_value = ft_getenv(env, vari);
-			if (!vari_value)
-				return (return_message("Undefined variable.\n", 1, 2));
+		//	if (!vari_value)
+		//		return (return_message("Undefined variable.\n", 1, 2));
+		//	if (vari_value)
 			change_part_str(cp, help.i, help.j - 1, vari_value);
 		}
 		if (cp[help.i] == '"' || cp[help.i] == '\'')

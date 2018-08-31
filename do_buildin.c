@@ -31,11 +31,15 @@ static void	echo(char **paras)
 	{
 		while (*paras)
 		{
-			ft_printf("%s", *paras++);
+			ft_printf("%s", *paras);
 			if (ct-- > 2)
-				ft_printf(" ");
+			{
+				if (ft_strlen(*paras))
+					ft_printf(" ");
+			}
 			else
 				ft_printf("\n");
+			paras++;
 		}
 	}
 	else

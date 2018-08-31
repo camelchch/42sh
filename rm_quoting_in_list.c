@@ -25,15 +25,47 @@ void		change_part_str(char *ori, int start, int end, char *change)
 	ft_bzero(after, MAX_BUF);
 	ft_strcpy(after, ori + end + 1);
 	ft_bzero(ori + start, MAX_BUF - start);
+	if (change)
 	ft_strcat(ori, change);
 	ft_strcat(ori, after);
 }
+//NEW added
+void		move_onebyte_left(char *cp, int start, char change)
+{
+	cp[start - 1] = change;
+	start++;
+	while (cp[start])
+	{
+		cp[start - 1] = cp[start];
+		start++;
+	}
+	cp[start - 1] = '\0';
+}
+// make $'\t' become single char '\t' etc..
+void		newline_tab_etc(char *wd_cp, int j)
+{
+	int		ct;
 
+	if (wd_cp[j] == '\'')
+	{
+		ct = j + 2;
+		while (wd_cp[ct] != '\'')
+		{
+			if (wd_cp[ct] == 't' && wd_cp[ct - 1] == '\\')
+				move_onebyte_left(wd_cp, ct, '\t');
+			else if (wd_cp[ct] == 'n' && wd_cp[ct - 1] == '\\')
+				move_onebyte_left(wd_cp, ct, '\n');
+			ct++;
+		}
+	}
+
+}
 void		dollor_sign(t_helper *help, char *cp, char *vari)
 {
 	help->j = help->i + 1;
 	help->k = 0;
-	while (cp[help->j] && cp[help->j] != '"' && cp[help->j] != '$')
+	newline_tab_etc(cp, help->j);
+	while (cp[help->j] && cp[help->j] != '"' && cp[help->j] != '\'' && cp[help->j] != '$')
 		vari[(help->k)++] = cp[(help->j)++];
 }
 
